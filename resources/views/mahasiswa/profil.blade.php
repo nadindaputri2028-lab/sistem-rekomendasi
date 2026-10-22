@@ -1,13 +1,54 @@
 @extends('layouts.app')
-@section('title','Data Mahasiswa')
+
+@section('title', 'Data Mahasiswa')
+
 @section('content')
-<div class="container"><div class="profile"><div class="profile-cover"></div><div class="profile-body">
-<div class="profile-head"><div style="display:flex;gap:15px;align-items:center"><img class="avatar" src="{{ $m->foto ? asset('storage/'.$m->foto) : 'https://ui-avatars.com/api/?name='.urlencode($m->nama_lengkap) }}" alt=""><div><h2>{{ $m->nama_lengkap }}</h2><small>NIM: {{ $m->nim }}</small></div></div><button class="btn small" onclick="document.getElementById('edit').scrollIntoView()">✎ Edit Profil</button></div>
-<div class="info-grid"><div class="info-box"><h4>📚 Ringkasan Akademik</h4><p>IPK Terakhir: <b>{{ number_format($m->ipk ?? 0,2) }}</b></p><p>IPS Terakhir: <b>{{ number_format($m->ips ?? 0,2) }}</b></p><p>Semester: <b>{{ $m->semester }}</b></p></div><div class="info-box"><h4>👤 Informasi Akademik</h4><p>Program Studi: <b>{{ $m->prodi }}</b></p><p>Email: {{ $m->email }}</p><p>No. HP: {{ $m->no_hp ?? '-' }}</p></div><div class="info-box"><h4>🏆 Prestasi</h4><p>{{ $m->prestasi ?: 'Belum ada data.' }}</p></div><div class="info-box"><h4>⚙ Keahlian & Minat</h4><p><b>Keahlian:</b> {{ $m->keahlian ?: '-' }}</p><p><b>Minat:</b> {{ $m->minat ?: '-' }}</p></div></div>
-</div></div>
-<div id="edit" class="card form-card" style="margin-top:18px"><h2>Edit Profil</h2><p class="sub">Mahasiswa hanya mengubah data profil dan pengalaman yang relevan.</p>
-<form method="POST" action="{{ route('mahasiswa.profil.update') }}" enctype="multipart/form-data">@csrf @method('PUT')
-<div class="grid-2"><div class="field"><label>Nama Lengkap</label><input name="nama_lengkap" value="{{ $m->nama_lengkap }}" required></div><div class="field"><label>NIM</label><input name="nim" value="{{ $m->nim }}" required></div><div class="field"><label>Program Studi</label><input name="prodi" value="{{ $m->prodi }}" required></div><div class="field"><label>Semester</label><input type="number" name="semester" value="{{ $m->semester }}" required></div><div class="field"><label>Email</label><input type="email" name="email" value="{{ $m->email }}" required></div><div class="field"><label>Nomor HP</label><input name="no_hp" value="{{ $m->no_hp }}"></div></div>
-<div class="field"><label>Prestasi</label><textarea name="prestasi">{{ $m->prestasi }}</textarea></div><div class="field"><label>Keahlian / Skill</label><textarea name="keahlian">{{ $m->keahlian }}</textarea></div><div class="field"><label>Minat</label><textarea name="minat">{{ $m->minat }}</textarea></div><div class="field"><label>Foto Profil</label><input type="file" name="foto" accept="image/*"></div><button class="btn">Simpan Data</button>
-</form></div></div>
+<div class="container">
+    <div class="profile">
+        <div class="profile-cover"></div>
+        <div class="profile-body">
+            <div class="profile-head">
+                <div style="display:flex; gap:15px; align-items:center">
+                    <img class="avatar" 
+                         src="{{ $m->foto ? asset('storage/'.$m->foto) : 'https://ui-avatars.com/api/?name='.urlencode($m->nama_lengkap) }}" 
+                         alt="Foto Profil">
+                    <div>
+                        <h2>{{ $m->nama_lengkap }}</h2>
+                        <small>NIM: {{ $m->nim }}</small>
+                    </div>
+                </div>
+                <a href="{{ route('mahasiswa.profil.edit') }}" class="btn small">
+                    ✎ Edit Profil
+                </a>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <h4>📚 Ringkasan Akademik</h4>
+                    <p>IPK Terakhir: <b>{{ number_format($m->ipk ?? 0, 2) }}</b></p>
+                    <p>IPS Terakhir: <b>{{ number_format($m->ips ?? 0, 2) }}</b></p>
+                    <p>Semester: <b>{{ $m->semester }}</b></p>
+                </div>
+
+                <div class="info-box">
+                    <h4>👤 Informasi Akademik</h4>
+                    <p>Program Studi: <b>{{ $m->prodi }}</b></p>
+                    <p>Email: {{ $m->email }}</p>
+                    <p>No. HP: {{ $m->no_hp ?? '-' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <h4>🏆 Prestasi</h4>
+                    <p>{{ $m->prestasi ?: 'Belum ada data.' }}</p>
+                </div>
+
+                <div class="info-box">
+                    <h4>⚙ Keahlian & Minat</h4>
+                    <p><b>Keahlian:</b> {{ $m->keahlian ?: '-' }}</p>
+                    <p><b>Minat:</b> {{ $m->minat ?: '-' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

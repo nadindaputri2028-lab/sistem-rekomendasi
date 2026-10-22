@@ -32,4 +32,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Mahasiswa::class);
     }
+
+    public function notifications()
+    {
+    return $this->hasMany(Notification::class);
+    }
 }

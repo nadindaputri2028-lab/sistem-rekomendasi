@@ -1,1 +1,71 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Hasil Rekomendasi</title><style>body{font-family:Arial;font-size:12px}h2{text-align:center}table{width:100%;border-collapse:collapse}th,td{border:1px solid #aaa;padding:7px;text-align:left}button{padding:8px}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Cetak / Simpan PDF</button><h2>Hasil Rekomendasi Mahasiswa</h2><p>Lomba: {{ $lomba->nama }}</p><table><tr><th>Rank</th><th>Nama</th><th>NIM</th><th>Prodi</th><th>Nilai</th><th>Status</th></tr>@foreach($results as $r)<tr><td>{{ $r->ranking }}</td><td>{{ $r->mahasiswa->nama_lengkap }}</td><td>{{ $r->mahasiswa->nim }}</td><td>{{ $r->mahasiswa->prodi }}</td><td>{{ number_format($r->nilai_akhir*100,2) }}</td><td>{{ $r->status }}</td></tr>@endforeach</table></body></html>
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hasil Rekomendasi</title>
+    <style>
+        body {
+            font-family: Arial;
+            font-size: 12px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #aaa;
+            padding: 7px;
+            text-align: left;
+        }
+
+        button {
+            padding: 8px;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button onclick="window.print()">
+        Cetak / Simpan PDF
+    </button>
+
+    <h2>Hasil Rekomendasi Mahasiswa</h2>
+    <p>Lomba: {{ $lomba->nama }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Nama</th>
+                <th>NIM</th>
+                <th>Prodi</th>
+                <th>Nilai</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($results as $r)
+                <tr>
+                    <td>{{ $r->ranking }}</td>
+                    <td>{{ $r->mahasiswa->nama_lengkap }}</td>
+                    <td>{{ $r->mahasiswa->nim }}</td>
+                    <td>{{ $r->mahasiswa->prodi }}</td>
+                    <td>{{ number_format($r->nilai_akhir * 100, 2) }}</td>
+                    <td>{{ $r->status }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</body>
+</html>

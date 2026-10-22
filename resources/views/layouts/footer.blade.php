@@ -56,8 +56,9 @@
 
             @elseif($role === 'mahasiswa')
 
-                <a href="{{ route('mahasiswa.profil') }}">
-                    Data Mahasiswa
+                <!-- KODE BARU -->
+                <a href="{{ route('mahasiswa.profil.show') }}">
+                    Profil
                 </a>
 
                 <a href="{{ route('mahasiswa.lomba.index') }}">

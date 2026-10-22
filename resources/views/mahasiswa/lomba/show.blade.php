@@ -1,6 +1,64 @@
 @extends('layouts.app')
-@section('title','Detail Lomba')
+
+@section('title', 'Detail Lomba')
+
 @section('content')
-<div class="container"><div class="detail-grid"><div class="detail-card card"><span class="badge">{{ $lomba->kategori }}</span><h1>{{ $lomba->nama }}</h1><div class="meta">♟ {{ $lomba->penyelenggara }} &nbsp; ▣ {{ $lomba->deadline->format('d M Y') }} &nbsp; ⌖ {{ $lomba->lokasi ?? 'Online' }}</div><hr style="border:0;border-top:1px solid #eee;margin:20px 0"><h3>Deskripsi Lomba</h3><p>{{ $lomba->deskripsi }}</p><h3>Persyaratan Pendaftaran</h3><p>{{ $lomba->persyaratan ?: 'Persyaratan belum dicantumkan.' }}</p><h3>Benefit</h3><p>{{ $lomba->benefit ?: '-' }}</p></div>
-<div class="side-card card"><h3>Status Pendaftaran</h3><span class="badge green">{{ $lomba->status }}</span><p class="meta">Deadline<br><b>{{ $lomba->deadline->format('d M Y') }}</b></p><p class="meta">Peserta terdaftar<br><b>{{ $lomba->pendaftarans()->count() }} mahasiswa</b></p>@if($lomba->panduan)<a class="btn outline" style="width:100%;text-align:center;margin-bottom:8px" href="{{ $lomba->panduan }}" target="_blank">Unduh Panduan</a>@endif<form method="POST" action="{{ route('mahasiswa.pendaftaran.store',$lomba) }}">@csrf<button class="btn" style="width:100%" @disabled($lomba->deadline->isPast())>Daftar Lomba</button></form></div></div></div>
+<div class="container">
+    <div class="detail-grid">
+        <div class="detail-card card">
+            <span class="badge">{{ $lomba->kategori }}</span>
+            <h1>{{ $lomba->nama }}</h1>
+
+            <div class="meta">
+                ♟ {{ $lomba->penyelenggara }} &nbsp; 
+                ▣ {{ $lomba->deadline->format('d M Y') }} &nbsp; 
+                ⌖ {{ $lomba->lokasi ?? 'Online' }}
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+            <h3>Deskripsi Lomba</h3>
+            <p>{{ $lomba->deskripsi }}</p>
+
+            <h3>Persyaratan Pendaftaran</h3>
+            <p>{{ $lomba->persyaratan ?: 'Persyaratan belum dicantumkan.' }}</p>
+
+            <h3>Benefit</h3>
+            <p>{{ $lomba->benefit ?: '-' }}</p>
+        </div>
+
+        <div class="side-card card">
+            <h3>Status Pendaftaran</h3>
+            <span class="badge green">{{ $lomba->status }}</span>
+
+            <p class="meta">
+                Berakhirnya<br>
+                <b>{{ $lomba->deadline->format('d M Y') }}</b>
+            </p>
+
+            <p class="meta">
+                Peserta terdaftar<br>
+                <b>{{ $lomba->pendaftarans()->count() }} mahasiswa</b>
+            </p>
+
+            @if($lomba->panduan)
+                <a 
+                    class="btn outline" 
+                    style="width: 100%; text-align: center; margin-bottom: 8px;" 
+                    href="{{ $lomba->panduan }}" 
+                    target="_blank"
+                >
+                    Unduh Panduan
+                </a>
+            @endif
+
+            <form method="POST" action="{{ route('mahasiswa.pendaftaran.store', $lomba) }}">
+                @csrf
+                <button class="btn" style="width: 100%;" @disabled($lomba->deadline->isPast())>
+                    Daftar Lomba
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

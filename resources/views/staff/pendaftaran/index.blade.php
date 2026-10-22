@@ -1,5 +1,63 @@
 @extends('layouts.app')
-@section('title','Pendaftaran Lomba')
+
+@section('title', 'Pendaftaran Lomba')
+
 @section('content')
-<div class="container"><div class="page-title"><h1>Pendaftaran Lomba</h1><p>Kelola pendaftaran mahasiswa dan status seleksi.</p></div><div class="table-card card"><table class="table"><thead><tr><th>MAHASISWA</th><th>LOMBA</th><th>TANGGAL</th><th>STATUS</th><th>UBAH STATUS</th></tr></thead><tbody>@forelse($pendaftarans as $p)<tr><td><b>{{ $p->mahasiswa->nama_lengkap }}</b><br>{{ $p->mahasiswa->nim }}</td><td>{{ $p->lomba->nama }}</td><td>{{ $p->tanggal_daftar->format('d M Y') }}</td><td>{{ $p->status }}</td><td><form method="POST" action="{{ route('staff.pendaftaran.status',$p) }}" style="display:flex;gap:5px">@csrf @method('PATCH')<select name="status"><option @selected($p->status==='Menunggu')>Menunggu</option><option @selected($p->status==='Diproses')>Diproses</option><option @selected($p->status==='Diterima')>Diterima</option><option @selected($p->status==='Ditolak')>Ditolak</option></select><button class="btn small">Simpan</button></form></td></tr>@empty<tr><td colspan="5" class="empty">Belum ada pendaftaran.</td></tr>@endforelse</tbody></table>{{ $pendaftarans->links('layouts.pagination') }}</div></div>
+<div class="container">
+    <div class="page-title">
+        <h1>Pendaftaran Lomba</h1>
+        <p>Kelola pendaftaran mahasiswa dan status seleksi.</p>
+    </div>
+
+    <div class="table-card card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>MAHASISWA</th>
+                    <th>LOMBA</th>
+                    <th>TANGGAL</th>
+                    <th>STATUS</th>
+                    <th>CATATAN</th>
+                    <th>AKSI</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($pendaftarans as $p)
+                    <tr>
+                        <!-- 1. Kolom Mahasiswa -->
+                        <td>
+                            <b>{{ $p->mahasiswa->nama_lengkap }}</b><br>
+                            <small class="text-muted">{{ $p->mahasiswa->nim }}</small>
+                        </td>
+
+                        <!-- 2. Kolom Lomba -->
+                        <td>{{ $p->lomba->nama }}</td>
+
+                        <!-- 3. Kolom Tanggal -->
+                        <td>{{ $p->tanggal_daftar->format('d M Y') }}</td>
+
+                        <!-- 4. Kolom Status -->
+                        <td>{{ $p->status }}</td>
+
+                        <!-- 5. Kolom Catatan -->
+                        <td>{{ $p->catatan ?? '-' }}</td>
+
+                        <!-- 6. Kolom Aksi -->
+                        <td>
+                            <a href="{{ route('staff.pendaftaran.edit', $p) }}" class="btn small">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="empty">Belum ada pendaftaran.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        {{ $pendaftarans->links('layouts.pagination') }}
+    </div>
+</div>
 @endsection

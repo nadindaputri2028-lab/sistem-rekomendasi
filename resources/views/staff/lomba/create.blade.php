@@ -1,10 +1,100 @@
-@php $lomba=new \App\Models\Lomba; @endphp
+@php 
+    $lomba = new \App\Models\Lomba; 
+@endphp
+
 @extends('layouts.app')
+
 @section('title', false ? 'Edit Data Lomba' : 'Input Data Lomba')
+
 @section('content')
-<div class="container"><div class="form-card card"><h2>{{ false ? 'Edit Data Lomba' : 'Input Data Lomba' }}</h2><p class="sub">Tambah dan kelola informasi kompetisi akademik maupun nonakademik.</p>
-<form method="POST" action="{{ false ? route('staff.lomba.update',$lomba) : route('staff.lomba.store') }}">@csrf @if(false) @method('PUT') @endif
-<div class="grid-2"><div class="field"><label>Nama Lomba</label><input name="nama" value="{{ old('nama','') }}" required></div><div class="field"><label>Kategori</label><select name="kategori"><option>Akademik</option><option>Nonakademik</option></select></div><div class="field"><label>Subkategori</label><input name="subkategori" value="{{ old('subkategori','') }}"></div><div class="field"><label>Penyelenggara</label><input name="penyelenggara" value="{{ old('penyelenggara','') }}" required></div><div class="field"><label>Tingkat</label><input name="tingkat" value="{{ old('tingkat','') }}"></div><div class="field"><label>Lokasi</label><input name="lokasi" value="{{ old('lokasi','') }}"></div><div class="field"><label>Tanggal Pelaksanaan</label><input type="date" name="tanggal_pelaksanaan" value="{{ old('tanggal_pelaksanaan','') }}"></div><div class="field"><label>Deadline Pendaftaran</label><input type="date" name="deadline" value="{{ old('deadline','') }}" required></div><div class="field"><label>Status</label><select name="status"><option>Aktif</option><option>Akan Datang</option><option>Selesai</option></select></div><div class="field"><label>Link Panduan</label><input name="panduan" value="{{ old('panduan','') }}" placeholder="https://..."></div></div>
-<div class="field"><label>Deskripsi</label><textarea name="deskripsi">{{ old('deskripsi','') }}</textarea></div><div class="field"><label>Persyaratan</label><textarea name="persyaratan">{{ old('persyaratan','') }}</textarea></div><div class="field"><label>Benefit</label><textarea name="benefit">{{ old('benefit','') }}</textarea></div>
-<button class="btn">Simpan Lomba</button> <a class="btn outline" href="{{ route('staff.lomba.index') }}">Batal</a></form></div></div>
+<div class="container">
+    <div class="form-card card">
+        <h2>{{ false ? 'Edit Data Lomba' : 'Input Data Lomba' }}</h2>
+        <p class="sub">Tambah dan kelola informasi kompetisi akademik maupun nonakademik.</p>
+
+        <form method="POST" action="{{ false ? route('staff.lomba.update', $lomba) : route('staff.lomba.store') }}">
+            @csrf
+            @if(false)
+                @method('PUT')
+            @endif
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>Nama Lomba</label>
+                    <input name="nama" value="{{ old('nama', '') }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Kategori</label>
+                    <select name="kategori">
+                        <option>Akademik</option>
+                        <option>Nonakademik</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Subkategori</label>
+                    <input name="subkategori" value="{{ old('subkategori', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Penyelenggara</label>
+                    <input name="penyelenggara" value="{{ old('penyelenggara', '') }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Tingkat</label>
+                    <input name="tingkat" value="{{ old('tingkat', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Lokasi</label>
+                    <input name="lokasi" value="{{ old('lokasi', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Tanggal Pelaksanaan</label>
+                    <input type="date" name="tanggal_pelaksanaan" value="{{ old('tanggal_pelaksanaan', '') }}">
+                </div>
+
+                <div class="field">
+                    <label>Berakhirnya Lomba</label>
+                    <input type="date" name="deadline" value="{{ old('deadline', '') }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Status</label>
+                    <select name="status">
+                        <option>Aktif</option>
+                        <option>Akan Datang</option>
+                        <option>Selesai</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Link Panduan</label>
+                    <input name="panduan" value="{{ old('panduan', '') }}" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Deskripsi</label>
+                <textarea name="deskripsi">{{ old('deskripsi', '') }}</textarea>
+            </div>
+
+            <div class="field">
+                <label>Persyaratan</label>
+                <textarea name="persyaratan">{{ old('persyaratan', '') }}</textarea>
+            </div>
+
+            <div class="field">
+                <label>Benefit</label>
+                <textarea name="benefit">{{ old('benefit', '') }}</textarea>
+            </div>
+
+            <button class="btn">Simpan Lomba</button>
+            <a class="btn outline" href="{{ route('staff.lomba.index') }}">Batal</a>
+        </form>
+    </div>
+</div>
 @endsection
