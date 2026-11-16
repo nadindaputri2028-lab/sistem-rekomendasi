@@ -14,11 +14,19 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
+        'linkedin_id',
+        'linkedin_token',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'google_token',
+        'google_refresh_token',
+        'linkedin_token',
     ];
 
     protected function casts(): array
@@ -35,6 +43,6 @@ class User extends Authenticatable
 
     public function notifications()
     {
-    return $this->hasMany(Notification::class);
+        return $this->hasMany(Notification::class);
     }
 }

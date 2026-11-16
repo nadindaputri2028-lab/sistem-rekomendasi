@@ -24,6 +24,7 @@
                     <th>PRODI</th>
                     <th>IPK</th>
                     <th>NILAI AKHIR</th>
+                    <th>KECOCOKAN</th>
                     <th>STATUS</th>
                 </tr>
             </thead>
@@ -43,6 +44,15 @@
                             <b>{{ number_format($r->nilai_akhir * 100, 2) }}</b>
                         </td>
                         <td>
+                            @if($r->match_score !== null)
+                                <span class="badge {{ $r->match_score >= 75 ? 'green' : ($r->match_score >= 50 ? 'orange' : 'red') }}">
+                                    {{ number_format($r->match_score, 0) }}%
+                                </span>
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>
                             <span class="badge {{ $r->status === 'Direkomendasikan' ? 'green' : ($r->status === 'Tidak Direkomendasikan' ? 'red' : 'orange') }}">
                                 {{ $r->status }}
                             </span>
@@ -50,7 +60,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="empty">
+                        <td colspan="8" class="empty">
                             Belum ada hasil. Jalankan perhitungan terlebih dahulu.
                         </td>
                     </tr>

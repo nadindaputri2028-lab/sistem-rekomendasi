@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 class NotificationController extends Controller
 {
     /**
-     * Menampilkan semua notifikasi
-     * milik user yang sedang login.
+     * Menampilkan semua notifikasi milik user yang sedang login.
      */
     public function index()
     {
@@ -27,40 +26,30 @@ class NotificationController extends Controller
     }
 
     /**
-     * Membuka notifikasi.
-     *
-     * Notifikasi otomatis ditandai sebagai
-     * sudah dibaca kemudian diarahkan ke
-     * halaman tujuan notifikasi.
+     * Membuka notifikasi dan otomatis menandainya sebagai sudah dibaca.
      */
     public function open(Notification $notification)
     {
-        // Pastikan notifikasi milik user yang sedang login
         if ($notification->user_id != session('user_id')) {
             abort(403);
         }
 
-        // Tandai sudah dibaca
         $notification->update([
             'is_read' => true,
         ]);
 
-        // Jika notifikasi memiliki URL tujuan
         if ($notification->url) {
             return redirect($notification->url);
         }
 
-        // Jika tidak memiliki URL
         return redirect()->route('notifications.index');
     }
 
     /**
-     * Menandai satu notifikasi
-     * sebagai sudah dibaca.
+     * Menandai satu notifikasi sebagai sudah dibaca.
      */
     public function read(Notification $notification)
     {
-        // Pastikan notifikasi milik user yang sedang login
         if ($notification->user_id != session('user_id')) {
             abort(403);
         }
@@ -73,8 +62,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * Menandai semua notifikasi
-     * sebagai sudah dibaca.
+     * Menandai semua notifikasi sebagai sudah dibaca.
      */
     public function readAll()
     {
@@ -89,5 +77,40 @@ class NotificationController extends Controller
             'success',
             'Semua notifikasi telah dibaca.'
         );
+    }
+
+    /**
+     * Menghapus satu notifikasi.
+     */
+    public function destroy(Notification $notification)
+    {
+        if ($notification->user_id != session('user_id')) {
+            abort(403);
+        }
+
+        $notification->delete();
+
+        return back()->with(
+            'success',
+            'Notifikasi berhasil dihapus.'
+        );
+    }
+
+    /**
+     * Menghapus semua notifikasi milik user yang sedang login.
+     */
+    public function destroyAll()
+    {
+        Notification::where(
+            'user_id',
+            session('user_id')
+        )->delete();
+
+        return redirect()
+            ->route('notifications.index')
+            ->with(
+                'success',
+                'Semua notifikasi berhasil dihapus.'
+            );
     }
 }

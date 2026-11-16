@@ -51,6 +51,7 @@
                 <th>NIM</th>
                 <th>Prodi</th>
                 <th>Nilai</th>
+                <th>Kecocokan</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -62,6 +63,7 @@
                     <td>{{ $r->mahasiswa->nim }}</td>
                     <td>{{ $r->mahasiswa->prodi }}</td>
                     <td>{{ number_format($r->nilai_akhir * 100, 2) }}</td>
+                    <td>{{ $r->match_score !== null ? number_format($r->match_score, 0) . '%' : '-' }}</td>
                     <td>{{ $r->status }}</td>
                 </tr>
             @endforeach

@@ -42,6 +42,19 @@ class KriteriaController extends Controller
     }
 
     /**
+     * Menampilkan detail satu kriteria.
+     */
+    public function show(Kriteria $kriteria)
+    {
+        $kriteria->load('lomba');
+
+        return view(
+            'staff.kriteria.show',
+            compact('kriteria')
+        );
+    }
+
+    /**
      * Menambahkan kriteria ke lomba tertentu.
      */
     public function store(Request $request)

@@ -23,6 +23,25 @@ class Rekomendasi extends Model
         'detail_nilai' => 'array',
     ];
 
+    /**
+     * Persentase kecocokan (match score) yang tersimpan
+     * di dalam kolom detail_nilai.
+     */
+    public function getMatchScoreAttribute(): ?float
+    {
+        $score = $this->detail_nilai['match_score'] ?? null;
+
+        return $score === null ? null : (float) $score;
+    }
+
+    /**
+     * Apakah mahasiswa memenuhi seluruh syarat nilai minimum.
+     */
+    public function getEligibleAttribute(): bool
+    {
+        return (bool) ($this->detail_nilai['eligible'] ?? false);
+    }
+
     public function lomba()
     {
         return $this->belongsTo(Lomba::class);

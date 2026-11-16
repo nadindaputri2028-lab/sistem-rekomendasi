@@ -1,11 +1,13 @@
+
 @extends('layouts.app')
 
 @section('title', 'Dashboard Staff')
 
 @section('content')
-<div class="container">
+<div class="container staff-dashboard">
 
-    <div class="page-title">
+    {{-- HEADER DASHBOARD --}}
+    <div class="staff-hero">
         <h1>Dashboard Staff</h1>
         <p>Selamat datang kembali, berikut adalah ringkasan data operasional sistem hari ini.</p>
     </div>
@@ -57,7 +59,6 @@
             </div>
         </div>
 
-
         {{-- KOLOM KANAN: AKTIVITAS TERBARU --}}
         <div class="dashboard-main">
 
@@ -84,7 +85,6 @@
                         @forelse($terbaru as $p)
 
                             <tr>
-
                                 <td>Pendaftaran Lomba</td>
 
                                 <td>
@@ -100,21 +100,18 @@
                                 </td>
 
                                 <td>
-
                                     @php
                                         $badgeClass = match($p->status) {
                                             'Diterima' => 'green',
-                                            'Ditolak'  => 'red',
-                                            default    => 'blue'
+                                            'Ditolak' => 'red',
+                                            default => 'blue'
                                         };
                                     @endphp
 
                                     <span class="badge {{ $badgeClass }}">
                                         {{ $p->status }}
                                     </span>
-
                                 </td>
-
                             </tr>
 
                         @empty
@@ -133,11 +130,7 @@
 
             </div>
 
-
-            {{-- ========================================= --}}
             {{-- PORTFOLIO MAHASISWA --}}
-            {{-- ========================================= --}}
-
             <div class="section-head portfolio-head">
                 <h2>Portfolio Mahasiswa</h2>
 
@@ -145,7 +138,6 @@
                     Lihat Semua
                 </a>
             </div>
-
 
             <div class="portfolio-card">
 
@@ -199,7 +191,6 @@
 
                         </div>
 
-
                         <div class="portfolio-action">
 
                             <a href="{{ route('staff.portfolio.show', $portfolio->id) }}"
@@ -236,252 +227,344 @@
 
 <style>
 
-    /* =========================================
-       DASHBOARD GRID
-    ========================================= */
+/* =========================================
+   DASHBOARD STAFF
+========================================= */
 
-    .dashboard-grid {
+.staff-dashboard {
+    color: #334155;
+}
+
+/* =========================================
+   HEADER DASHBOARD STAFF
+========================================= */
+
+.staff-dashboard .staff-hero {
+    background: linear-gradient(110deg, #123e78, #075eb8 65%, #378fe0);
+    border-radius: 18px;
+    padding: 30px 36px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(30, 58, 95, 0.12);
+}
+
+.staff-dashboard .staff-hero h1 {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+}
+
+.staff-dashboard .staff-hero p {
+    color: #eaf3ff;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* =========================================
+   DASHBOARD GRID
+========================================= */
+
+.staff-dashboard .dashboard-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.staff-dashboard .section-head h2 {
+    color: #1e3a5f;
+}
+
+/* =========================================
+   STATISTIK
+========================================= */
+
+.staff-dashboard .stats-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.staff-dashboard .stat-card {
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.07);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #dbe5f0;
+}
+
+.staff-dashboard .stat-card .icon {
+    font-size: 28px;
+}
+
+.staff-dashboard .stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.staff-dashboard .stat-info small {
+    color: #475569;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.staff-dashboard .stat-info strong {
+    font-size: 20px;
+    color: #1e3a5f;
+}
+
+/* =========================================
+   TABEL AKTIVITAS
+========================================= */
+
+.staff-dashboard .table-card {
+    background: #ffffff;
+    border: 1px solid #dbe5f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.06);
+    overflow-x: auto;
+}
+
+.staff-dashboard .table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.staff-dashboard .table thead {
+    background: #eff6ff;
+}
+
+.staff-dashboard .table th {
+    color: #1e3a5f;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 15px 14px;
+    border-bottom: 1px solid #dbe5f0;
+    white-space: nowrap;
+}
+
+.staff-dashboard .table td {
+    color: #334155;
+    font-size: 13px;
+    padding: 15px 14px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.staff-dashboard .table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.staff-dashboard .table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.staff-dashboard .table .empty {
+    text-align: center;
+    color: #475569;
+    padding: 25px;
+}
+
+/* STATUS */
+
+.staff-dashboard .badge.green {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.staff-dashboard .badge.red {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.staff-dashboard .badge.blue {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* =========================================
+   PORTFOLIO
+========================================= */
+
+.staff-dashboard .portfolio-head {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.staff-dashboard .portfolio-head h2 {
+    margin: 0;
+}
+
+.staff-dashboard .view-all {
+    text-decoration: none;
+    color: #1d4ed8;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.staff-dashboard .view-all:hover {
+    color: #1e3a5f;
+    text-decoration: underline;
+}
+
+.staff-dashboard .portfolio-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #dbe5f0;
+    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.06);
+    overflow: hidden;
+}
+
+.staff-dashboard .portfolio-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.staff-dashboard .portfolio-item:last-child {
+    border-bottom: none;
+}
+
+.staff-dashboard .portfolio-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.staff-dashboard .portfolio-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 15px;
+    color: #1e3a5f;
+}
+
+.staff-dashboard .student-name {
+    margin: 0 0 6px 0;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.staff-dashboard .portfolio-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.staff-dashboard .portfolio-detail span {
+    color: #475569;
+    font-size: 12px;
+}
+
+.staff-dashboard .portfolio-detail strong {
+    color: #1e3a5f;
+}
+
+/* TOMBOL DETAIL */
+
+.staff-dashboard .portfolio-action {
+    flex-shrink: 0;
+}
+
+.staff-dashboard .btn-detail {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #1e3a5f;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.staff-dashboard .btn-detail:hover {
+    background: #2563a6;
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   PORTFOLIO KOSONG
+========================================= */
+
+.staff-dashboard .portfolio-empty {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.staff-dashboard .portfolio-empty .empty-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.staff-dashboard .portfolio-empty h3 {
+    margin: 0 0 6px 0;
+    color: #1e3a5f;
+    font-size: 17px;
+}
+
+.staff-dashboard .portfolio-empty p {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 992px) {
+
+    .staff-dashboard .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-dashboard .stats-vertical {
         display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 24px;
-        align-items: start;
-        margin-top: 20px;
+        grid-template-columns: repeat(2, 1fr);
     }
 
+}
 
-    /* =========================================
-       STATISTIK
-    ========================================= */
+@media (max-width: 576px) {
 
-    .stats-vertical {
-        display: flex;
+    .staff-dashboard .staff-hero {
+        padding: 24px 20px;
+    }
+
+    .staff-dashboard .staff-hero h1 {
+        font-size: 23px;
+    }
+
+    .staff-dashboard .stats-vertical {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-dashboard .portfolio-item {
         flex-direction: column;
-        gap: 16px;
+        align-items: flex-start;
     }
 
-    .stat-card {
-        background: #ffffff;
-        padding: 18px 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        border: 1px solid #f1f5f9;
+    .staff-dashboard .portfolio-action {
+        width: 100%;
     }
 
-    .stat-card .icon {
-        font-size: 28px;
-    }
-
-    .stat-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .stat-info small {
-        color: #64748b;
-        font-size: 13px;
-        margin-bottom: 2px;
-    }
-
-    .stat-info strong {
-        font-size: 20px;
-        color: #0f172a;
-    }
-
-
-    /* =========================================
-       PORTFOLIO
-    ========================================= */
-
-    .portfolio-head {
-        margin-top: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .portfolio-head h2 {
-        margin: 0;
-    }
-
-    .view-all {
-        text-decoration: none;
-        color: #2563eb;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .view-all:hover {
-        text-decoration: underline;
-    }
-
-
-    .portfolio-card {
-        background: #ffffff;
-        border-radius: 12px;
-        border: 1px solid #f1f5f9;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-    }
-
-
-    .portfolio-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 12px 20px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .portfolio-item:last-child {
-        border-bottom: none;
-    }
-
-
-    .portfolio-info {
-        min-width: 0;
-        flex: 1;
-    }
-
-
-    .portfolio-info h3 {
-        margin: 0 0 5px 0;
-        font-size: 15px;
-        color: #0f172a;
-    }
-
-
-    .student-name {
-        margin: 0 0 6px 0;
-        color: #475569;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-
-    .portfolio-detail {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px 18px;
-    }
-
-
-    .portfolio-detail span {
-        color: #64748b;
-        font-size: 12px;
-    }
-
-
-    .portfolio-detail strong {
-        color: #334155;
-    }
-
-
-    .portfolio-action {
-        flex-shrink: 0;
-    }
-
-
-    .btn-detail {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 8px;
-        background: #1e3a5f;
-        color: #ffffff;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 600;
-        transition: 0.2s;
-    }
-
-
-    .btn-detail:hover {
-        background: #16304f;
-        transform: translateY(-1px);
-    }
-
-
-    /* =========================================
-       PORTFOLIO KOSONG
-    ========================================= */
-
-    .portfolio-empty {
+    .staff-dashboard .btn-detail {
+        width: 100%;
         text-align: center;
-        padding: 40px 20px;
     }
 
-
-    .portfolio-empty .empty-icon {
-        font-size: 40px;
-        margin-bottom: 10px;
-    }
-
-
-    .portfolio-empty h3 {
-        margin: 0 0 6px 0;
-        color: #334155;
-        font-size: 17px;
-    }
-
-
-    .portfolio-empty p {
-        margin: 0;
-        color: #64748b;
-        font-size: 14px;
-    }
-
-
-    /* =========================================
-       TABLE
-    ========================================= */
-
-    .table-card {
-        overflow-x: auto;
-    }
-
-
-    /* =========================================
-       RESPONSIVE
-    ========================================= */
-
-    @media (max-width: 992px) {
-
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .stats-vertical {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-    }
-
-
-    @media (max-width: 576px) {
-
-        .stats-vertical {
-            grid-template-columns: 1fr;
-        }
-
-        .portfolio-item {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .portfolio-action {
-            width: 100%;
-        }
-
-        .btn-detail {
-            width: 100%;
-            text-align: center;
-        }
-
-    }
+}
 
 </style>
 

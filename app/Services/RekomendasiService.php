@@ -15,8 +15,10 @@ class RekomendasiService
             ->orderBy('id')
             ->get();
 
-        // Ambil seluruh mahasiswa beserta portfolio
-        $students = Mahasiswa::with('portfolios')->get();
+        // Ambil seluruh mahasiswa aktif beserta portfolio
+        $students = Mahasiswa::with('portfolios')
+            ->where('is_active', true)
+            ->get();
 
         // Jika kriteria atau mahasiswa belum tersedia
         if ($criteria->isEmpty() || $students->isEmpty()) {
@@ -133,6 +135,26 @@ class RekomendasiService
 
                 $x = $raw[$criterion->id];
 
+                /*
+                |--------------------------------------------------------------------------
+                | Batas Nilai Minimum (Syarat Lomba)
+                |--------------------------------------------------------------------------
+                |
+                | Jika nilai mahasiswa berada di bawah nilai minimum
+                | yang ditetapkan staff, maka kontribusi kriteria ini
+                | dinolkan (mahasiswa tidak memenuhi syarat).
+                |
+                */
+
+                $minimum = (float) ($criterion->nilai_minimum ?? 0);
+
+                if ($minimum > 0 && $x < $minimum) {
+
+                    $normalized[$criterion->id] = 0.0;
+
+                    continue;
+                }
+
                 // Cost
                 if ($criterion->jenis === 'cost') {
 
@@ -182,11 +204,29 @@ class RekomendasiService
                     * $normalized[$criterion->id];
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Persentase Kecocokan (Match Score)
+            |--------------------------------------------------------------------------
+            |
+            | Dibandingkan data kriteria mahasiswa dengan syarat
+            | (nilai minimum) tiap kriteria lomba.
+            |
+            */
+
+            $match = $this->matchScore(
+                $student,
+                $lomba
+            );
+
             $rows[] = [
                 'mahasiswa' => $student,
                 'score' => $score,
                 'raw' => $raw,
                 'normalized' => $normalized,
+                'match_score' => $match['score'],
+                'eligible' => $match['eligible'],
+                'match_detail' => $match['details'],
             ];
         }
 
@@ -253,6 +293,9 @@ class RekomendasiService
                         'bobot_ahp' => $weights,
                         'normalisasi' => $row['normalized'],
                         'nilai_kriteria' => $row['raw'],
+                        'match_score' => $row['match_score'],
+                        'eligible' => $row['eligible'],
+                        'match_detail' => $row['match_detail'],
                         'ci' => $ci,
                         'cr' => $cr,
                     ],
@@ -267,6 +310,87 @@ class RekomendasiService
             'ci' => $ci,
             'cr' => $cr,
             'matrix' => $matrix,
+        ];
+    }
+
+    /**
+     * Menghitung Persentase Kecocokan (Match Score) antara
+     * data kriteria mahasiswa dengan syarat (nilai minimum) lomba.
+     *
+     * Mengembalikan array:
+     *  - score    : persentase kecocokan 0 - 100
+     *  - eligible : true bila SEMUA syarat nilai minimum terpenuhi
+     *  - details  : rincian per kriteria
+     */
+    public function matchScore(
+        Mahasiswa $mahasiswa,
+        Lomba $lomba
+    ): array {
+
+        $criteria = $lomba->kriterias()
+            ->orderBy('id')
+            ->get();
+
+        if ($criteria->isEmpty()) {
+            return [
+                'score' => 0.0,
+                'eligible' => false,
+                'details' => [],
+            ];
+        }
+
+        $totalRatio = 0.0;
+        $met = 0;
+        $details = [];
+
+        foreach ($criteria as $criterion) {
+
+            $value = $this->criterionValue(
+                $mahasiswa,
+                $criterion->nama
+            );
+
+            $minimum = (float) ($criterion->nilai_minimum ?? 0);
+
+            if ($minimum <= 0) {
+
+                // Tidak ada syarat minimum -> dianggap terpenuhi
+                $ratio = 1.0;
+
+            } elseif ($value >= $minimum) {
+
+                $ratio = 1.0;
+
+            } else {
+
+                // Partial credit untuk nilai di bawah syarat
+                $ratio = $minimum > 0
+                    ? ($value / $minimum)
+                    : 0.0;
+            }
+
+            if ($ratio >= 1.0) {
+                $met++;
+            }
+
+            $totalRatio += $ratio;
+
+            $details[$criterion->id] = [
+                'kode' => $criterion->kode,
+                'nama' => $criterion->nama,
+                'nilai' => $value,
+                'nilai_minimum' => $minimum,
+                'terpenuhi' => $ratio >= 1.0,
+            ];
+        }
+
+        return [
+            'score' => round(
+                ($totalRatio / $criteria->count()) * 100,
+                2
+            ),
+            'eligible' => $met === $criteria->count(),
+            'details' => $details,
         ];
     }
 

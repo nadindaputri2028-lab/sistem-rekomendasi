@@ -15,6 +15,7 @@ class Mahasiswa extends Model
         'nim',
         'prodi',
         'semester',
+        'is_active',
         'email',
         'no_hp',
         'ipk',
@@ -28,6 +29,7 @@ class Mahasiswa extends Model
     protected $casts = [
         'ipk' => 'float',
         'ips' => 'float',
+        'is_active' => 'boolean',
     ];
 
     public function user()

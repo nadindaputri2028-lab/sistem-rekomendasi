@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('type')
                 ->default('info');
 
+            $table->string('url')
+                ->nullable();
+
             $table->boolean('is_read')
                 ->default(false);
 

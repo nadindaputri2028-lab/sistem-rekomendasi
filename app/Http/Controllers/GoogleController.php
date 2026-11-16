@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
@@ -13,7 +14,21 @@ class GoogleController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        try {
+            return Socialite::driver('google')
+                ->stateless()
+                ->with([
+                    'prompt' => 'select_account',
+                    'hd' => 'mhs.politala.ac.id',
+                ])
+                ->redirect();
+
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with(
+                'error',
+                'Gagal mengakses Google Login: ' . $e->getMessage()
+            );
+        }
     }
 
     /**
@@ -26,32 +41,54 @@ class GoogleController extends Controller
                 ->stateless()
                 ->user();
 
-            // Cari user berdasarkan email Google
-            $user = User::where('email', $googleUser->getEmail())->first();
+            // Ambil email Google
+            $email = strtolower($googleUser->getEmail() ?? '');
 
-            // Jika email belum terdaftar
+            // Pastikan menggunakan email mahasiswa Politala
+            if (!str_ends_with($email, '@mhs.politala.ac.id')) {
+                return redirect()->route('login')->with(
+                    'error',
+                    'Gunakan akun Google mahasiswa Politala.'
+                );
+            }
+
+            // Cari akun berdasarkan email login
+            $user = User::where('email', $email)->first();
+
+            // Jika akun tidak ditemukan
             if (!$user) {
-                return redirect('/login')->with(
+                return redirect()->route('login')->with(
                     'error',
                     'Email Google belum terdaftar di sistem.'
                 );
             }
 
-            // Simpan data Google ke user
-            $user->update([
-                'google_id' => $googleUser->getId(),
-                'google_token' => $googleUser->token,
-                'google_refresh_token' => $googleUser->refreshToken,
-            ]);
+            // Pastikan akun memiliki role yang sesuai
+            if (!in_array($user->role, ['mahasiswa', 'staff'])) {
+                return redirect()->route('login')->with(
+                    'error',
+                    'Role akun tidak dikenali.'
+                );
+            }
 
-            // Buat session login sesuai sistem yang sudah digunakan
+            // Pastikan data mahasiswa terhubung
+            if ($user->role === 'mahasiswa' && !$user->mahasiswa) {
+                return redirect()->route('login')->with(
+                    'error',
+                    'Data mahasiswa belum terhubung dengan akun.'
+                );
+            }
+
+            // Login menggunakan akun yang ditemukan
+            Auth::login($user, true);
+
+            // Perbarui session
+            $request->session()->regenerate();
+
             session([
                 'user_id' => $user->id,
                 'role' => $user->role,
             ]);
-
-            // Regenerate session untuk keamanan
-            $request->session()->regenerate();
 
             // Arahkan berdasarkan role
             if ($user->role === 'mahasiswa') {
@@ -62,18 +99,10 @@ class GoogleController extends Controller
                 return redirect()->route('staff.dashboard');
             }
 
-            // Jika role tidak dikenali
-            session()->flush();
-
-            return redirect('/login')->with(
-                'error',
-                'Role akun tidak dikenali.'
-            );
-
         } catch (\Exception $e) {
-            return redirect('/login')->with(
+            return redirect()->route('login')->with(
                 'error',
-                'Login dengan Google gagal. Silakan coba lagi.'
+                'Login dengan Google gagal: ' . $e->getMessage()
             );
         }
     }

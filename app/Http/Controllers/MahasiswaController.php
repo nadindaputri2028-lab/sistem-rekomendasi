@@ -88,10 +88,9 @@ class MahasiswaController extends Controller
         }
 
         $m->update($data);
-        $m->user?->update([
-            'name'  => $m->nama_lengkap,
-            'email' => $m->email
-        ]);
+       $m->user?->update([
+    'name' => $m->nama_lengkap
+]);
 
         // Redirect ke halaman detail profil setelah berhasil simpan
         return redirect()->route('mahasiswa.profil.show')

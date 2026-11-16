@@ -99,27 +99,71 @@ class StaffController extends Controller
 
     public function index(Request $request)
     {
-        $mahasiswas = Mahasiswa::when(
-            $request->q,
-            fn($q) =>
-            $q->where(
-                'nama_lengkap',
-                'like',
-                '%' . $request->q . '%'
-            )
-            ->orWhere(
-                'nim',
-                'like',
-                '%' . $request->q . '%'
-            )
-        )
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        $query = Mahasiswa::query();
+
+        // Pencarian berdasarkan Nama atau NIM
+        if ($request->filled('q')) {
+
+            $keyword = $request->q;
+
+            $query->where(function ($sub) use ($keyword) {
+                $sub->where('nama_lengkap', 'like', '%' . $keyword . '%')
+                    ->orWhere('nim', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        // Filter status aktif / non-aktif
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'aktif');
+        }
+
+        // Filter program studi - default ke Teknologi Informasi
+        if ($request->filled('prodi')) {
+            $query->where('prodi', $request->prodi);
+        } else {
+            // Default filter ke Teknologi Informasi
+            $query->where('prodi', 'Teknologi Informasi');
+        }
+
+        // Filter semester
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
+        }
+
+       $mahasiswas = $query
+        ->orderBy('nama_lengkap', 'asc')
+        ->orderBy('nim', 'asc')
+        ->paginate(10)
+        ->withQueryString();
+
+        // Opsi dropdown prodi - hanya Teknologi Informasi
+        $prodis = ['Teknologi Informasi'];
+
+        // Opsi dropdown semester 1-8
+        $semesters = range(1, 8);
 
         return view(
             'staff.mahasiswa.index',
-            compact('mahasiswas')
+            compact('mahasiswas', 'prodis', 'semesters')
+        );
+    }
+
+    /**
+     * Mengaktifkan / menonaktifkan mahasiswa.
+     */
+    public function toggleActive(Mahasiswa $mahasiswa)
+    {
+        $mahasiswa->update([
+            'is_active' => !$mahasiswa->is_active,
+        ]);
+
+        $status = $mahasiswa->is_active
+            ? 'diaktifkan'
+            : 'dinonaktifkan';
+
+        return back()->with(
+            'success',
+            "Mahasiswa {$mahasiswa->nama_lengkap} berhasil {$status}."
         );
     }
 
@@ -190,6 +234,8 @@ class StaffController extends Controller
 
     public function show(Mahasiswa $mahasiswa)
     {
+        $mahasiswa->load('portfolios');
+
         return view(
             'staff.mahasiswa.show',
             compact('mahasiswa')
